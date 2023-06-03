@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <!--      xmlns:sec="http://www.w3.org/1999/xhtml"-->
+  <title>Login page </title>
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous"
+  />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <style>
+    .search_result{
+      height:100vh;
+      padding-top:80px;
+      width:100vw;
+      justify-content: center;
+      align-items:center;
+      /*padding-left: 20px;*/
+      /*padding-right: 20px;*/
+
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex">
+
+  <!--sidebar-->
+  <header class="sidebar d-flex flex-column  bg-dark px-4 block   justify-content-between align-items-center  py-4"  >
+
+    <nav class="navbar-nav text-light d-flex flex-column align-items-center  justify-content-evenly" >
+      <i class="bi bi-person-circle icon "></i>
+      <div sec:authorize="isAuthenticated()" th:class="greeting">
+        <h6 class="text-center">Welcome</h6>
+
+        <p th:text="${user}" class="truncate"></p>
+      </div>
+
+
+
+      <ul class="list-unstyled ">
+
+        <!--        <div sec:authorize="isAuthenticated()">-->
+        <li class="nav-item "><a href="/admin/home#home" class="nav-link text-light d-flex align-items-end " > <i class="bi bi-house"></i>&nbsp;<span class="list-item">Home</span></a></li>
+        <!--        </div>-->
+        <!--        <div sec:authorize="hasRole('ROLE_ADMIN')">-->
+        <li class="nav-item "><a href="/admin/home#depart" class="nav-link text-light d-flex align-items-end"><i class="bi bi-arrows-fullscreen"></i>&nbsp;<span class="list-item">Depart</span></a></li>
+        <!--        </div>-->
+        <!--        <div sec:authorize="hasRole('USER')">-->
+        <li class="nav-item "><a href="/admin/home#doctor" class="nav-link text-light d-flex align-items-end"><i class="bi bi-plus-circle"></i>&nbsp;<span class="list-item">Doctor</span></a></li>
+        <!--       </div>-->
+
+        <li class="nav-item "><a href="/admin/home#nurse" class="nav-link text-light d-flex align-items-end" ><i class="bi bi-calendar-date"></i>&nbsp;<span class="list-item">Nurse</span></a></li>
+
+        <li class="nav-item "><a href="/admin/home#patient" class="nav-link text-light d-flex align-items-end"><i class="bi bi-person"></i>&nbsp;<span class="list-item">Patient</span> </a></li>
+
+        <li class="nav-item "><a href="/admin/home#about" class="nav-link text-light d-flex align-items-end"><i class="bi bi-bell"></i>&nbsp;<span class="list-item">About</span> </a></li>
+
+        <li class="nav-item "><a href="/admin/home#contact" class="nav-link text-light d-flex align-items-end"><i class="bi bi-envelope"></i>&nbsp;<span class="list-item">Contact</span> </a></li>
+
+      </ul>
+
+    </nav>
+
+
+    <a th:defer="true" th:href="@{/logout}" class="btn btn-success out">Sign out</a>
+  </header>
+
+
+
+
+
+  <!--rest page-->
+  <div class="d-flex flex-column">
+    <!--    top search bar-->
+    <header  class="header  ">
+      <div class="container">
+        <form th:action="@{/admin/home/search/page}" method="GET" class="d-flex justify-content-end">
+
+          <div class="input-group">
+            <input type="text" class="form-control search" name="keyword" placeholder="search ..." >
+            <button type="submit" class="btn  btn-outline-light">Search</button>
+          </div>
+        </form>
+      </div>
+
+
+    </header>
+
+    <main class="search_result">
+      <div class="container">
+        <div class="mb-3  d-flex justify-content-between align-items-center"><h4>All Users Information</h4>   <span>page [[${currentPage}]] of [[${totalPages}]]</span> </div>
+        <table th:fragment="content"  class="table table-bordered table-striped" >
+          <thead class="table-purple">
+          <tr >
+            <th class="search_title " ><i class="bi bi-person adjust "></i> <span>Id</span> </th>
+            <th class="search_title"><i class="bi bi-person-fill adjust "></i> <span>Name</span> </th>
+            <th class="search_title"> <i class="bi bi-envelope adjust "></i> <span>Email</span> </th>
+            <th class="search_title" > <i class="bi bi-telephone adjust "></i> <span>Phone Number</span> </th>
+            <!--      <th>Action </th>-->
+          </tr>
+          </thead>
+
+          <tbody class="patient_tbody">
+          <tr  th:each ="user:${users}" th:data-patient="${user.firstName}">
+
+            <td class="text-dark" th:text ="${user.id}" />
+            <td class="text-dark" th:text ="${user.firstName} + ' '+ ${user.lastName}" />
+            <td class="text-dark" th:text ="${user.email}" />
+            <td class="text-dark" th:text="${user.phoneNumber}" />
+
+
+
+
+
+
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+
+        <footer class="panel-footer px-2">
+          <div th:if="${totalPages > 1}">
+            <div class="row align-items-center  ">
+              <div class="col-2 fw-bolder">
+                Total Users: [[${totalItems}]]
+              </div>
+
+
+
+              <div class="col-9 ms-auto " >
+                <a class="prev noSelect " th:if="${currentPage >1}" th:href="@{'/admin/home/search/page/' + ${currentPage -1}}">prev</a>
+                <span class="noSelect prev_disabled "  th:unless="${currentPage >1}">prev</span>
+
+                <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+
+      <a class="page_number"  th:if="${currentPage != i}" th:href="@{'/admin/home/search/page/' + ${i}}">[[${i}]]</a>
+      <span th:unless="${currentPage != i}" th:class="page_active">[[${i}]]</span> &nbsp; &nbsp;  </span>
+
+                <a class="next noSelect " th:if="${currentPage < totalPages}" th:href="@{'/admin/home/search/page/' + ${currentPage + 1}}">next</a>
+                <span  class="noSelect next_disabled " th:unless="${currentPage < totalPages}">next</span>
+
+              </div>
+
+              <div class="col ">
+                <a class="btn btn-outline-purple " href="/admin/home#home">Home</a>
+              </div>
+
+            </div>
+          </div>
+        </footer>
+
+
+      </div>
+
+
+
+
+    </main>
+
+
+    <!--    footer-->
+    <footer  class="footer text-light text-center py-3 ">
+      <div class="container">Zhu Qigong . Mao Haiyun . Zhang Jie  &copy; 2023  All Right Reserved</div>
+      <a href="#" class="position-absolute bottom-0 end-0 p-3 text-light ">
+        <i class="bi bi-arrow-up-circle h3"></i>
+      </a>
+    </footer>
+  </div>
+</div>
+</body>
+</html>
