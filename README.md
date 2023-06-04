@@ -1,5 +1,6 @@
 ### After launching the project, run the following sql to insert roles:
 ```insert into hospital_appointment.roles (name) values ('ROLE_GUEST');  // id = 1
+insert into hospital_appointment.roles (name) values ('ROLE_GUEST'); // id = 1
 insert into hospital_appointment.roles (name) values ('ROLE_DOCTOR');  // id = 2
 insert into hospital_appointment.roles (name) values ('ROLE_MANAGER');  // id = 3
 ```
